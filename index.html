@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+
+        <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    </head>
+
+    <body>
+        <header>
+            <div class="container mt10">
+                <div class="col-md-12">
+                    <p class="site-title">Google Map Deneme</p>
+                </div>
+            </div>
+            <div class="top-menu">
+                <div class="container">
+                    <div class="col-md-12">
+
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div id="body">
+
+            <input type="button" id="showInterviewLocationModal" class="btn btn-info" value="Osman" />
+            <div id="interviewLocationModal" class="modal fade in" style="overflow: hidden !important;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Lokasyon seç</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div id="googleMapSelector" style="height: 400px; width: 560px;"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="button" value="Tamam" id="saveInterviewLocation" class="btn btn-success" />
+                            <input type="button" value="Kaldır" id="cancelInterviewLocation" class="btn btn-danger" />
+                            <input type="button" value="Vazgeç" class="btn btn-default" data-dismiss="modal" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD3jvLuCOq7tB6ulw941CQDKduU9Rhdom4"></script>
+            <script src="./google-map-selector.js"></script>
+
+            <script type="text/javascript">
+                function initMeetingLocationSelector() {
+                    arrangeMeetingLocationButton();
+                }
+
+                function arrangeMeetingLocationButton() {
+                    if (!MapLocation.IsSelected) {
+                        $('#cancelInterviewLocation').hide();
+                        $('#showInterviewLocationModal').val('Düzenle');
+                    } else {
+                        $('#showInterviewLocationModal').val('Düzenle');
+                    }
+                }
+
+                $(document).ready(function() {
+                    initMeetingLocationSelector();
+                    $('#saveInterviewLocation').bind('click', function() {
+                        if (!MapLocation.IsSelected) {
+                            console.log("Seçim yapmadınız!");
+                        } else {
+                            console.log(MapLocation);
+                            $('#interviewLocationModal').modal('hide');
+                        }
+                        arrangeMeetingLocationButton();
+                    });
+
+                    $('#cancelInterviewLocation').bind('click', function() {
+                        if (MapLocation.IsSelected) {
+                            console.log("Seçim kaldırıldı!");
+                            setMapDefaultLocation();
+                            $('#interviewLocationModal').modal('hide');
+                            $('#cancelInterviewLocation').hide();
+                        }
+                        arrangeMeetingLocationButton();
+                    });
+
+                    $('#showInterviewLocationModal').bind('click', function() {
+                        $('#googleMapSelector').css('opacity', '0.1');
+                        $('#interviewLocationModal').modal('show');
+
+                        setTimeout(function() {
+                            google.maps.event.trigger(map, 'resize');
+                            if (marker != null) {
+                                map.setCenter(marker.getPosition());
+                                map.setZoom(map.getZoom());
+                            }
+
+                            $('#googleMapSelector').animate({
+                                opacity: '1'
+                            }, 500);
+                        }, 500);
+                    });
+
+                });
+            </script>
+        </div>
+    </body>
+
+</html>
